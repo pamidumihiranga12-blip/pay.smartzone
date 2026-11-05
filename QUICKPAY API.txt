@@ -1,0 +1,295 @@
+RELOAD API Document
+-----------------------------------------------------------------------------------------------------
+
+
+KEY PARAMETERS
+Merchants ID: OTk0ODAwSecret 
+Key: 5c83f283655d39ab8876  
+API URL: http://secure.quickpay.lk/api/
+Merchant ID / Member ID
+The unique ID allotted to each Merchant/Member.
+Secret Key
+The mixed character and numeric string which should be used to generate HASH String.
+You can able to regenerate anytime you required.
+API URL
+URL of your service provider to send recharge requests
+HASH String
+HASH is the method to generate a mixed string of parameters to send along with recharge request for secure transactions.
+Method to Generate : SHA512 Encoded Format (In Lowercase)
+Provider Codes
+Code values to choose the service for the recharge/bill services
+
+
+
+
+
+
+
+
+RESPONSE CODES
+Reason Code	Description
+000	Accepted
+101	Merchant ID Missing
+102	Hash Key Missing
+103	Mobile Number Missing
+104	Provider Code Missing
+105	Invalid Amount
+106	Invalid Merchant ID
+107	Invalid Hash Key
+108	Insufficient Funds
+109	Invalid Provider Code
+110	Provider Code Declined
+111	Request ID / Reference Number Missing*
+112	Invalid Reference Number / Recharge ID*
+113	Duplicate Reference Number
+114	Request Cannot Be Processed At This Time
+115	Insufficient Number
+116	Repeat Request In Specified Time Interval
+117	Provider Currently Down
+118	Amount Lesser/Greater Than Allowed Amount
+119	Account Suspended! Please Contact Administrator
+120	Request Already In Queue
+121	Contact Customer Care
+122	Invalid Number
+123	Invalid Username or Password
+124	Username Missing/Invalid
+125	Password Missing/Invalid
+126	Permission Denied
+127	Invalid Request
+777	Custom Notification For Developers
+999	Server Under Maintenance
+
+
+
+
+
+
+
+
+
+RECHARGE REQUEST
+HTTP Method : GET / POST
+
+API URL
+http://secure.quickpay.lk/api/?action=recharge&format={RF}&mid={Merchant-ID}& provider={Provider-Code}&number={Mobile/DTH-Number}&amount={Recharge-Amount}&refno={Your-Reference-Number}&rurl={Triggering-URL-To-Get-Auto-Response} &hash={Hash-Value}&value1={Value- 1}&value2={Value-2}&value3={Value-3}
+
+CLOUD MACHINE
+http://secure.quickpay.lk/api/?action=recharge&mid={Merchant-ID}&secretkey={SecretKey}&provider={Provider-Code}&number=[MOB]&amount=[AMT]&refno=[TID]&format=cloud
+
+Parameters	Data TypeData Type	Required / Optional	Description
+mid	String	Required	Merchant ID
+number	String	Required	Service Request Account Number
+amount	Decimal	Required	Recharge / Bill Amount
+provider	String	Required	Provider Code
+hash	String	Required	mid|number|provider|amount|refno|rurl|secretkey
+refno	String	Optional	Merchant Reference Number
+rurl	String	Optional	Triggering URL To Get Auto Response
+value1	String	Optional	Additional Values of Landline/EB/Gas/Insurance
+value2	String	Optional	Additional Values of Landline/EB/Gas/Insurance
+value3	String	Optional	Additional Values of Landline/EB/Gas/Insurance
+format	String	Optional	JSON / XML (XML is Default)
+
+Output Example
+
+JSON
+{"RechargeStatus":{"reason":"Accepted","reasoncode":"000","rid":1785767,"refno":"325485d47"}}
+
+XML
+<?xml version="1.0" encoding="utf-8"?>
+<Recharge-Status>
+<Status rid="" refno="TEST-112345" reason=" Accepted " reasoncode="000"></Status>
+</Recharge-Status>
+
+
+
+
+
+
+
+
+
+RECHARGE RESPONSE
+
+Auto Response to Return/Triggering URL
+Response
+
+Parameter	Values
+rid	Recharge Request ID
+refno	Reference Number
+number	Service Request Account Number
+amount	Recharge Value
+status	Recharge Status ( Success / Failure )
+transid	Transaction ID
+reason	Reason for Failure
+hash	mid|rid|txnid|number|amount|status|transid|secretkey
+status	Pending / Success / Failure
+
+Output Example
+DEFAULT PARAMETERS ON RETURN URL
+
+http://secure.quickpay.lk?rid={Recharge-Request-ID}&refno={Your-Reference- Number}&number={Mobile-Number}&amount={Amount}&status={Status-SUCCESS/FAILURE}&transid={Transaction-ID}&reason={Reason-If-Any}&hash={Secure-Hash-Value}
+SET YOUR OWN PARAMETERS ON RETURN/RESPONSE URL
+Use the following formats in your Return URL (rurl) or in Response URL (Dashboard->Setting->Preference) to receive values with your own parameters.
+Format	Description
+{Recharge-Request-ID}	Recharge Gateway Request ID
+{Your-Reference-Number}	Your Recharge Request Reference Number
+{Mobile-Number}	Mobile/Account Number
+{Amount}	Bill/Recharge Amount
+{Status}	Status of Recharge in Proper case [Ex. Success / Failure]
+{status}	Status of Recharge in lowercase [Ex. success / failure]
+{STATUS}	Status of Recharge in Uppercase [Ex. SUCCESS / FAILURE]
+{s}	Status of Recharge in Single Letter lowercase [Ex. s / f]
+{S}	Status of Recharge in Single Letter Uppercase [Ex. S / F]
+{Transaction-ID}	Successful Recharge Transaction ID
+{Reason-If-Any}	Reason / Comments If Any
+{Secure-Hash-Value}	Secure Hash Value for Secure Transaction
+Note, rurl values will overwrite preset Response Url for the particular transaction.
+
+
+
+
+
+
+
+
+
+RECHARGE STATUS
+
+Response on Demand
+HTTP Method : GET / POST
+API URL
+http://secure.quickpay.lk/api/?action= rechargestatus&format={RF}&mid={Merchant-ID}&hash={Secure-Hash-Value}&rid={Recharge-Request-ID}
+
+OR
+
+API URL
+http://secure.quickpay.lk/api/?action= rechargestatus&format={RF}&mid={Merchant-ID}&hash={Hash-Value}&refno={Your-Reference-Number}
+
+CLOUD MACHINE
+http://secure.quickpay.lk/api/?action=status&mid={Merchant-ID}&secretkey={SecretKet}&refno=[TID]&format=cloud&[CLOUD]
+Parameters	Data Type	Required / Optional	Description
+mid	String	Required	Merchant ID
+rid / refno	String	Required	Recharge Request ID / Reference Number
+hash	String	Required	mid|rid|secretkey (or) mid|refno|secretkey
+format	String	Optional	JSON / XML / CLOUD (XML is Default)
+Response
+Parameter	Values
+rid	Recharge Request ID
+refno	Reference Number
+number	Service Request Account Number
+provider	Provider Code
+amount	Recharge Value
+transid	Transaction ID
+reason	Reason
+reasoncode	Reason Code
+status	Pending / Success / Failure
+
+Output Example
+JSON
+
+{"RechargeStatus":{"reason":"Accepted","reasoncode":"000","rid":"1013","refno":"TEST-112345","number":"9176477270","provider":"RV","amount":"10.00","transid":"","status":" Success "}}
+
+XML
+
+<?xml version="1.0" encoding="utf-8"?>
+<Recharge-Status>
+<Status rid="1013" refno="TEST-112345" number="9176477270" provider="RV" amount="10.00" transid="" reason="Accepted" reasoncode="000" status="Success"></Status>
+</Recharge-Status>
+
+
+
+
+
+
+
+
+
+
+RECHARGE HISTORY
+HTTP Method : GET / POST
+API URL
+http://secure.quickpay.lk/api/?action= rechargehistory&format={RF}&mid={Merchant-ID}&hash={Secure-Hash-Value}&fromdate={From Date}&todate={ToDate}&provider={ProviderCode}&status={RechargeStatus}&page={PageNo}&records={PageLimit}&submerchants={Sub-Merchants-Y/N}
+
+Parameters	Data Type	Required / Optional	Description
+mid	String	Required	Merchant ID
+fromdate	String	Optional	From Date (YYYY-MM-DD)
+todate	String	Optional	To Date (YYYY-MM-DD)
+keyword	String	Optional	Search Keyword
+provider	String	Optional	Provider Code
+status	String	Optional	Recharge Status
+page	Integer	Required	Page Number
+records	Integer	Optional	Number of Records
+submerchants	String	Optional	List Sub Merchants (Y/N)
+hash	String	Required	mid|keyword|provider|page|secretkey
+format	String	Optional	JSON / XML (XML is Default)
+
+JSON Output
+["RechargeHistory", {"rid":"1785765","shortName":"AipTech","gateway":"4","gatewayName":"Easy Life","receiveDate":"2016-11-21 03:11:03 PM","number":"7867947345","operator":"VF","operatorName":"Vodafone TN","type":"TEL","operatorType":"Prepaid","amount":"10.00","netAmount":"9.90","sentDate":"2016-11-21 03:11:03 PM","rechargeDate":"2016-11-21 03:11:05 PM","rechargeStatus":"Success","transID":"160045846472","closingBalance":"40.10","openingBalance":"50.00","merchantRefno":"32548547","operatorRefno":""}, {"rid":"1785765","shortName":"AipTech","gateway":"4","gatewayName":"Easy Life","receiveDate":"2016-11-21 03:11:03 PM","number":"7867947345","operator":"VF","operatorName":"Vodafone TN","type":"TEL","operatorType":"Prepaid","amount":"10.00","netAmount":"9.90","sentDate":"2016-11-21 03:11:03 PM","rechargeDate":"2016-11-21 03:11:05 PM","rechargeStatus":"Success","transID":"160045846472","closingBalance":"40.10","openingBalance":"50.00","merchantRefno":"32548547","operatorRefno":""} ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+BALANCE SUMMARY
+HTTP Method : GET / POST
+API URL
+http://secure.quickpay.lk/api/?action= balance&format={RF}&mid={Merchant-ID}&hash={Secure-Hash-Value}
+Parameters	Data Type	Required / Optional	Description
+mid	String	Required	Merchant ID
+hash	String	Required	mid|secretkey
+format	String	Optional	JSON / XML (XML is Default)
+Response
+Parameter	Values
+purchased	Total Purchased Amount
+hold	Total Hold Amount
+utilized	Total Utilized Amount
+balance	Current Balance
+
+Output Example
+XML
+
+<?xml version="1.0" encoding="utf-8"?>
+<Recharge_Credit>
+<Status mid="NzA3MDA" reason="Accepted" reasoncode="000" purchased="5000000.00" hold="9.70" utilized="0.00" balance="4999990.3"></Status>
+</Recharge_Credit>
+JSON
+{"MerchantBalance":{"reason":"Accepted","reasoncode":"000","mid":"NyEqMEA","purchased":"35000.00","utilized":"15000.00","hold":"500.00","balance":19500.0}}
+
+
+
+
+
+
+
+
+
+
+Provider Information
+HTTP Method : GET / POST
+API URL
+http://secure.quickpay.lk/api/?action= providerinfo&format={RF}&mid={Merchant-ID}&number={Number}&hash={Secure-Hash-Value}
+Parameters	Data Type	Required / Optional	Description
+mid	String	Required	Merchant ID
+number	String	Required	Number to get provider details
+hash	String	Required	mid|secretkey|number
+format	String	Optional	JSON
+Response
+Parameter	Values
+providerCode	Provider Code
+providerName	Provider Name
+providerType	Provider Type[TEL/DTH]
+circle	Circle Code
+circlename	Name of the Circle
+
+Output Example
+JSON
+
+{"ProviderInfo":{"reason":"Accepted","reasoncode":"000","providerCode":"RA","providerName":"Airtel","providerType":"TEL","Circle":"TN","Circlename":"TamilNadu"}}
